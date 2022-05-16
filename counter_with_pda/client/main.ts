@@ -25,11 +25,7 @@ import { Key } from "mz/readline";
 
 const ACCOUNT_SEED = "COUNTER";
 const ACCOUNT_KEYPAIR_PATH = path.join(__dirname, "../account.json");
-<<<<<<< HEAD
-const programId = new PublicKey("4DbDftd3t6cmSx2Y43ntUdpELLw9CVbhEBTFWBrz5XAW");
-=======
-const programId = new PublicKey("3wqrfttWUu7HqF6uep16qPay24g7WWgWAAYkRQ8onJTu");
->>>>>>> 52e8197... make write
+const programId = new PublicKey("9Lwrd2H2FpWBcp8Tquxz8h617ZLVX762rm89aXxauoor");
 
 
 class GreetingAccount {
@@ -46,11 +42,7 @@ class GreetingAccount {
 	let connection = await establishConnection();
 
 	let payer = await getPayer();
-<<<<<<< HEAD
-	let seed = "escrow1";
-=======
-	let seed = "test_seed";
->>>>>>> 52e8197... make write
+	let seed = "escrow2";
 	let seedBuffer = Buffer.from(seed);
 
 	const [theAccountToInit, bump] = await PublicKey.findProgramAddress(
@@ -140,7 +132,7 @@ class GreetingAccount {
 		SystemProgram.transfer({
 			fromPubkey: payer.publicKey,
 			toPubkey: theAccountToWriteTo,
-			lamports: LAMPORTS_PER_SOL / 100,
+			lamports: LAMPORTS_PER_SOL * 100,
 			programId: programId,
 
 		}),
@@ -174,51 +166,27 @@ class GreetingAccount {
 
 
 
-	// console.log("send lamports to escrow contract")
-	// console.log()
-	// console.log()
-	// console.log()
-
-	// const [theAccountToWriteTo, _] = await PublicKey.findProgramAddress(
-	// 	[seedBuffer],
-	// 	programId
-	// );
-
-	// console.log("account to write to : ", theAccountToWriteTo.toBase58());
-
-	// const word = "anal sex";
-	// var instruction_set = Buffer.concat([
-	// 	Buffer.alloc(1, 1), // writing PDA
-	// 	Buffer.alloc(1, word.length), // size of the seed (it varies)
-	// 	Buffer.from(word)
-	// ]);
-	// console.log(instruction_set);
 
 
-
-	console.log("write to pda")
+	console.log("withdraw funds from pda")
 	console.log()
 	console.log()
 	console.log()
 
+	const accountInfoBeforeWithdrawal = await connection.getAccountInfo(payer.publicKey);
+	if (accountInfoBeforeWithdrawal) {
+		console.log("payer balance : ", accountInfoBeforeWithdrawal.lamports);
+	}
 
-
-
-	const [theAccountToWriteTo, _] = await PublicKey.findProgramAddress(
-		[seedBuffer],
-		programId
-	);
-
-	const word = "test word";
-	var instruction_set = Buffer.concat([
-		Buffer.alloc(1, 1), // writing PDA
+	instruction_set = Buffer.concat([
+		Buffer.alloc(1, 2), // withdraw from pda
 		Buffer.alloc(1, word.length), // size of the seed (it varies)
 		Buffer.from(word)
 	]);
 	console.log(instruction_set);
 
 
-	const instructionWrite = new TransactionInstruction({
+	const instructionWithdraw = new TransactionInstruction({
 		programId: programId,
 		keys: [
 			{ pubkey: theAccountToWriteTo, isSigner: false, isWritable: true },
@@ -229,9 +197,20 @@ class GreetingAccount {
 
 	await sendAndConfirmTransaction(
 		connection,
-		new Transaction().add(instructionWrite),
+		new Transaction().add(instructionWithdraw),
 		[payer]
 	);
+
+
+
+	const payerInfoAfterWithdrawal = await connection.getAccountInfo(payer.publicKey);
+
+	if (payerInfoAfterWithdrawal) {
+
+		console.log("payer balance : ", payerInfoAfterWithdrawal.lamports);
+
+	}
+
 })();
 
 async function createAccountIfNotExists(connection: Connection, greetedkeypair: Keypair, payer: Keypair, programId: PublicKey) {
