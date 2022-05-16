@@ -1,0 +1,8 @@
+counter/target
+counter_with_pda/target
+counter/target
+counter_with_pda/target
+counter/test-ledger
+counter_with_pda/test-ledger
+counter/node_modules
+counter_with_pda/node_modules
